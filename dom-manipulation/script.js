@@ -24,7 +24,7 @@ function showRandomQuote() {
 }
 
 // Function to add a new quote
-function addQuote() {
+async function addQuote() {
     const newQuoteText = document.getElementById('newQuoteText').value.trim();
     const newQuoteCategory = document.getElementById('newQuoteCategory').value.trim();
 
@@ -44,6 +44,9 @@ function addQuote() {
     quotes.push(newQuote);
     saveQuotes(); // Save quotes to local storage
     populateCategories(); // Update categories in the dropdown
+
+    // Send the new quote to the server
+    await postQuoteToServer(newQuote);
 
     // Clear the input fields
     document.getElementById('newQuoteText').value = '';
@@ -103,31 +106,4 @@ function populateCategories() {
         categoryFilter.appendChild(option);
     });
 
-    // Restore last selected category from local storage
-    const lastSelectedCategory = localStorage.getItem('lastSelectedCategory') || 'all';
-    categoryFilter.value = lastSelectedCategory;
-}
-
-// Function to filter quotes based on selected category
-function filterQuotes() {
-    const selectedCategory = document.getElementById('categoryFilter').value;
-    localStorage.setItem('lastSelectedCategory', selectedCategory); // Save last selected category
-
-    const filteredQuotes = selectedCategory === 'all' ? quotes : quotes.filter(quote => quote.category === selectedCategory);
-    
-    // Display the filtered quotes
-    if (filteredQuotes.length === 0) {
-        document.getElementById('quoteDisplay').textContent = "No quotes available for this category.";
-    } else {
-        const randomIndex = Math.floor(Math.random() * filteredQuotes.length);
-        const quote = filteredQuotes[randomIndex];
-        document.getElementById('quoteDisplay').innerHTML = `"${quote.text}" - <strong>${quote.category}</strong>`;
-    }
-}
-
-// Step 1: Simulate Server Interaction
-const serverUrl = "https://jsonplaceholder.typicode.com/posts";
-
-async function fetchQuotesFromServer() {
-    try {
-        const response = await fetch(server
+ } //
