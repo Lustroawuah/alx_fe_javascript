@@ -9,7 +9,10 @@ let quotes = [
 function showRandomQuote() {
     const randomIndex = Math.floor(Math.random() * quotes.length);
     const quote = quotes[randomIndex];
-    document.getElementById('quoteDisplay').innerText = `"${quote.text}" - ${quote.category}`;
+
+    // Use innerHTML to set the quote display
+    const quoteDisplay = document.getElementById('quoteDisplay');
+    quoteDisplay.innerHTML = `"${quote.text}" - <strong>${quote.category}</strong>`;
 }
 
 // Step 3: Function to add a new quote
