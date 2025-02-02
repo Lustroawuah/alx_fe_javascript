@@ -126,20 +126,8 @@ function filterQuotes() {
 }
 
 // Step 1: Simulate Server Interaction
-function fetchQuotesFromServer() {
-    // Simulate fetching quotes from a server
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            const serverQuotes = [
-                { text: "To be yourself in a world that is constantly trying to make you something else is the greatest accomplishment.", category: "Inspiration" },
-                { text: "Success is not final, failure is not fatal: It is the courage to continue that counts.", category: "Motivation" }
-            ];
-            resolve(serverQuotes);
-        }, 2000); // Simulate network delay
-    });
-}
+const serverUrl = "https://jsonplaceholder.typicode.com/posts";
 
-// Step 2: Syncing Data
-async function syncQuotes() {
-    const serverQuotes = await fetchQuotesFromServer();
-    const newQuotes =
+async function fetchQuotesFromServer() {
+    try {
+        const response = await fetch(server
