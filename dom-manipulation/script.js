@@ -106,4 +106,89 @@ function populateCategories() {
         categoryFilter.appendChild(option);
     });
 
- } //
+    // Restore last selected category from local storage
+    const lastSelectedCategory = localStorage.getItem('lastSelectedCategory') || 'all';
+    categoryFilter.value = lastSelectedCategory;
+}
+
+// Function to filter quotes based on selected category
+function filterQuotes() {
+    const selectedCategory = document.getElementById('categoryFilter').value;
+    localStorage.setItem('lastSelectedCategory', selectedCategory); // Save last selected category
+
+    const filteredQuotes = selectedCategory === 'all' ? quotes : quotes.filter(quote => quote.category === selectedCategory);
+    
+    // Display the filtered quotes
+    if (filteredQuotes.length === 0) {
+        document.getElementById('quoteDisplay').textContent = "No quotes available for this category.";
+    } else {
+        const randomIndex = Math.floor(Math.random() * filteredQuotes.length);
+        const quote = filteredQuotes[randomIndex];
+        document.getElementById('quoteDisplay').innerHTML = `"${quote.text}" - <strong>${quote.category}</strong>`;
+    }
+}
+
+// Step 1: Simulate Server Interaction
+const serverUrl = "https://jsonplaceholder.typicode.com/posts";
+
+async function fetchQuotesFromServer() {
+    try {
+        const response = await fetch(serverUrl);
+        const serverQuotes = await response.json();
+        return serverQuotes.map(quote => ({
+            text: quote.title, // Using title as the quote text
+            category: "Imported" // Assigning a default category
+        }));
+    } catch (error) {
+        console.error("Error fetching quotes from server:", error);
+        return [];
+    }
+}
+
+// Step 2: Syncing Data
+async function syncQuotes() {
+    const serverQuotes = await fetchQuotesFromServer();
+    const newQuotes = serverQuotes.filter(serverQuote => {
+        return !quotes.some(localQuote => localQuote.text === serverQuote.text);
+    });
+
+    if (newQuotes.length > 0) {
+        quotes.push(...newQuotes);
+        saveQuotes();
+        alert('New quotes have been added from the server!');
+        populateCategories(); // Update categories after syncing
+    }
+}
+
+// Function to post a new quote to the server
+async function postQuoteToServer(quote) {
+    try {
+        const response = await fetch(serverUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(quote)
+        });
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        const data = await response.json();
+        console.log('Quote posted successfully:', data);
+    } catch (error) {
+        console.error('Error posting quote to server:', error);
+    }
+}
+
+// Attach event listeners
+document.getElementById('newQuote').addEventListener('click', showRandomQuote);
+document.getElementById('addQuoteButton').addEventListener('click', addQuote);
+document.getElementById('exportButton').addEventListener('click', exportQuotes);
+
+// Load quotes when the page loads
+loadQuotes();
+
+// Periodically sync quotes from the server every 10 seconds
+setInterval(syncQuotes, 10000);
