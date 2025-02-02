@@ -1,4 +1,3 @@
-// Step 1: Manage an array of quote objects
 let quotes = [];
 
 // Load quotes from local storage when the application initializes
@@ -10,7 +9,7 @@ function loadQuotes() {
     populateCategories(); // Populate categories after loading quotes
 }
 
-// Step 2: Function to display a random quote
+// Function to display a random quote
 function showRandomQuote() {
     if (quotes.length === 0) {
         document.getElementById('quoteDisplay').textContent = "No quotes available.";
@@ -24,7 +23,7 @@ function showRandomQuote() {
     quoteDisplay.innerHTML = `"${quote.text}" - <strong>${quote.category}</strong>`;
 }
 
-// Step 3: Function to add a new quote
+// Function to add a new quote
 function addQuote() {
     const newQuoteText = document.getElementById('newQuoteText').value.trim();
     const newQuoteCategory = document.getElementById('newQuoteCategory').value.trim();
@@ -54,12 +53,12 @@ function addQuote() {
     showRandomQuote();
 }
 
-// Step 4: Function to save quotes to local storage
+// Function to save quotes to local storage
 function saveQuotes() {
     localStorage.setItem('quotes', JSON.stringify(quotes));
 }
 
-// Step 5: Function to export quotes to a JSON file
+// Function to export quotes to a JSON file
 function exportQuotes() {
     const dataStr = JSON.stringify(quotes, null, 2); // Format JSON with indentation
     const blob = new Blob([dataStr], { type: 'application/json' });
@@ -74,7 +73,7 @@ function exportQuotes() {
     URL.revokeObjectURL(url); // Clean up
 }
 
-// Step 6: Function to import quotes from a JSON file
+// Function to import quotes from a JSON file
 function importFromJsonFile(event) {
     const fileReader = new FileReader();
     fileReader.onload = function(event) {
@@ -88,7 +87,7 @@ function importFromJsonFile(event) {
     fileReader.readAsText(event.target.files[0]);
 }
 
-// Step 7: Function to populate categories dynamically
+// Function to populate categories dynamically
 function populateCategories() {
     const categoryFilter = document.getElementById('categoryFilter');
     const categories = new Set(quotes.map(quote => quote.category)); // Extract unique categories
@@ -109,7 +108,7 @@ function populateCategories() {
     categoryFilter.value = lastSelectedCategory;
 }
 
-// Step 8: Function to filter quotes based on selected category
+// Function to filter quotes based on selected category
 function filterQuotes() {
     const selectedCategory = document.getElementById('categoryFilter').value;
     localStorage.setItem('lastSelectedCategory', selectedCategory); // Save last selected category
@@ -126,5 +125,21 @@ function filterQuotes() {
     }
 }
 
-// Step 9: Attach event listeners
-document.get
+// Step 1: Simulate Server Interaction
+function fetchQuotesFromServer() {
+    // Simulate fetching quotes from a server
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            const serverQuotes = [
+                { text: "To be yourself in a world that is constantly trying to make you something else is the greatest accomplishment.", category: "Inspiration" },
+                { text: "Success is not final, failure is not fatal: It is the courage to continue that counts.", category: "Motivation" }
+            ];
+            resolve(serverQuotes);
+        }, 2000); // Simulate network delay
+    });
+}
+
+// Step 2: Syncing Data
+async function syncQuotes() {
+    const serverQuotes = await fetchQuotesFromServer();
+    const newQuotes =
