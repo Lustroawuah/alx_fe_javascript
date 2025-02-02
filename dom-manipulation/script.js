@@ -7,6 +7,7 @@ function loadQuotes() {
     if (storedQuotes) {
         quotes = JSON.parse(storedQuotes);
     }
+    populateCategories(); // Populate categories after loading quotes
 }
 
 // Step 2: Function to display a random quote
@@ -43,6 +44,7 @@ function addQuote() {
     // Add the new quote to the quotes array
     quotes.push(newQuote);
     saveQuotes(); // Save quotes to local storage
+    populateCategories(); // Update categories in the dropdown
 
     // Clear the input fields
     document.getElementById('newQuoteText').value = '';
@@ -80,15 +82,49 @@ function importFromJsonFile(event) {
         quotes.push(...importedQuotes);
         saveQuotes();
         alert('Quotes imported successfully!');
+        populateCategories(); // Update categories after import
         showRandomQuote(); // Optionally show a random quote after import
     };
     fileReader.readAsText(event.target.files[0]);
 }
 
-// Step 7: Attach event listeners
-document.getElementById('newQuote').addEventListener('click', showRandomQuote);
-document.getElementById('addQuoteButton').addEventListener('click', addQuote);
-document.getElementById('exportButton').addEventListener('click', exportQuotes);
+// Step 7: Function to populate categories dynamically
+function populateCategories() {
+    const categoryFilter = document.getElementById('categoryFilter');
+    const categories = new Set(quotes.map(quote => quote.category)); // Extract unique categories
 
-// Load quotes when the page loads
-loadQuotes();
+    // Clear existing options
+    categoryFilter.innerHTML = '<option value="all">All Categories</option>';
+
+    // Add unique categories to the dropdown
+    categories.forEach(category => {
+        const option = document.createElement('option');
+        option.value = category;
+        option.textContent = category;
+        categoryFilter.appendChild(option);
+    });
+
+    // Restore last selected category from local storage
+    const lastSelectedCategory = localStorage.getItem('lastSelectedCategory') || 'all';
+    categoryFilter.value = lastSelectedCategory;
+}
+
+// Step 8: Function to filter quotes based on selected category
+function filterQuotes() {
+    const selectedCategory = document.getElementById('categoryFilter').value;
+    localStorage.setItem('lastSelectedCategory', selectedCategory); // Save last selected category
+
+    const filteredQuotes = selectedCategory === 'all' ? quotes : quotes.filter(quote => quote.category === selectedCategory);
+    
+    // Display the filtered quotes
+    if (filteredQuotes.length === 0) {
+        document.getElementById('quoteDisplay').textContent = "No quotes available for this category.";
+    } else {
+        const randomIndex = Math.floor(Math.random() * filteredQuotes.length);
+        const quote = filteredQuotes[randomIndex];
+        document.getElementById('quoteDisplay').innerHTML = `"${quote.text}" - <strong>${quote.category}</strong>`;
+    }
+}
+
+// Step 9: Attach event listeners
+document.get
